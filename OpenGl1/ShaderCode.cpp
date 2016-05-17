@@ -1,4 +1,4 @@
-const char* vertexShaderCode =
+const char* vertexShaderCode=
 "#version 430\r\n"
 ""
 "in layout(location=0) vec2 position;"
