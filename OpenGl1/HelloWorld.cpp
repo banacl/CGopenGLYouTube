@@ -141,11 +141,22 @@ void display()
 	//glDrawArrays(GL_TRIANGLES, (numTris-1)*NUM_OF_VERTICES, NUM_OF_VERTICES);//
 	//glDrawArrays(GL_TRIANGLES, 0, 6);
 
-	glm::vec3 dominatingColor(1.0f, 0.0f, 1.0f);
+	
 	GLint dominatingColorUniformLocation = glGetUniformLocation(programId, "dominatingColor");
-	glUniform3fv(dominatingColorUniformLocation, 1, &dominatingColor[0]);
+	GLint yFlipUniformLocation = glGetUniformLocation(programId, "yFlip");
 
+	glm::vec3 dominatingColor(1.0f, 0.0f, 0.0f);
+	glUniform3fv(dominatingColorUniformLocation, 1, &dominatingColor[0]);
+	glUniform1f(yFlipUniformLocation, 1.0f);
 	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, 0);
+
+	dominatingColor.r = 0.0f;
+	dominatingColor.g = 1.0f;
+	glUniform3fv(dominatingColorUniformLocation, 1, &dominatingColor[0]);
+	glUniform1f(yFlipUniformLocation, -1.0f);
+	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, 0);
+
+	
 	glutSwapBuffers();
 }
 
