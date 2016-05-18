@@ -134,8 +134,10 @@ void display()
 	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 	//glDrawArrays(GL_TRIANGLES, 0, 6);
 	//glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, 0);
-	sendAnotherTriToOpengl();
-	glDrawArrays(GL_TRIANGLES, (numTris-1)*NUM_OF_VERTICES, NUM_OF_VERTICES);//
+	//sendAnotherTriToOpengl();
+	//glDrawArrays(GL_TRIANGLES, (numTris-1)*NUM_OF_VERTICES, NUM_OF_VERTICES);//
+	//glDrawArrays(GL_TRIANGLES, 0, 6);
+	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, 0);
 	glutSwapBuffers();
 }
 
@@ -145,14 +147,14 @@ void sendDataToOpenGL()
 {
 	const float RED_TRi_Z = -1;
 	const float BLUE_TRI_Z = 0.9;
-	/*GLfloat verts[] =
+	GLfloat verts[] =
 	{
 		-1.0f, -1.0f, RED_TRi_Z,
 		1.0f, 0.0f, 0.0f,
 		+0.0f, +1.0f, RED_TRi_Z,
-		1.0f, 0.0f, 0.0f,
+		0.0f, 1.0f, 0.0f,
 		+1.0f, -1.0f, RED_TRi_Z,
-		1.0f, 0.0f, 0.0f,
+		0.0f, 0.0f, 1.0f,
 
 		-1.0f, +1.0f, BLUE_TRI_Z,
 		0.0f, 0.0f, 1.0f,
@@ -160,11 +162,11 @@ void sendDataToOpenGL()
 		0.0f, 0.0f, 1.0f,
 		+1.0f, +1.0f, BLUE_TRI_Z,
 		0.0f, 0.0f, 1.0f,
-	};*/
+	};
 	GLuint myBufferId;
 	glGenBuffers(1, &myBufferId);
 	glBindBuffer(GL_ARRAY_BUFFER, myBufferId);
-	glBufferData(GL_ARRAY_BUFFER, MAX_TRIS*TRIANGLE_BYTE_SIZE, NULL, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER,sizeof(verts), verts, GL_STATIC_DRAW);
 	glEnableVertexAttribArray(0);
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 6, 0);
 	glEnableVertexAttribArray(1);
@@ -172,11 +174,11 @@ void sendDataToOpenGL()
 
 
 
-	/*GLushort index[] = { 0, 1, 2,  3, 4,5 };
+	GLushort index[] = { 0, 1, 2 };
 	GLuint indexBufferId;
 	glGenBuffers(1, &indexBufferId);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBufferId);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(index), index, GL_STATIC_DRAW);*/
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(index), index, GL_STATIC_DRAW);
 }
 
 
