@@ -5,6 +5,7 @@
 #include <iostream>
 #include<fstream>
 #include<glm\glm.hpp>
+#include"Primitives\Vertex.h"
 
 const float X_DELTA = 0.1;
 GLuint numTris = 0;
@@ -146,22 +147,16 @@ void display()
 void sendDataToOpenGL()
 {
 	const float RED_TRi_Z = -1;
-	const float BLUE_TRI_Z = 0.9;
-	GLfloat verts[] =
+	
+	Vertex verts[] =
 	{
-		-1.0f, -1.0f, RED_TRi_Z,
-		1.0f, 0.0f, 0.0f,
-		+0.0f, +1.0f, RED_TRi_Z,
-		0.0f, 1.0f, 0.0f,
-		+1.0f, -1.0f, RED_TRi_Z,
-		0.0f, 0.0f, 1.0f,
+		glm::vec3(-1.0f, -1.0f, RED_TRi_Z),
+		glm::vec3(1.0f, 0.0f,        0.0f),
+		glm::vec3(+0.0f, +1.0f, RED_TRi_Z),
+		glm::vec3(0.0f, 1.0f,        0.0f),
+		glm::vec3(+1.0f, -1.0f, RED_TRi_Z),
+		glm::vec3(0.0f, 0.0f,        1.0f),
 
-		-1.0f, +1.0f, BLUE_TRI_Z,
-		0.0f, 0.0f, 1.0f,
-		+0.0f, -1.0f, BLUE_TRI_Z,
-		0.0f, 0.0f, 1.0f,
-		+1.0f, +1.0f, BLUE_TRI_Z,
-		0.0f, 0.0f, 1.0f,
 	};
 	GLuint myBufferId;
 	glGenBuffers(1, &myBufferId);

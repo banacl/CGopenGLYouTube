@@ -75,6 +75,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="HelloWorld.h" />
+    <ClInclude Include="Primitives\Vertex.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="fragmentShaderCode.glsl" />
