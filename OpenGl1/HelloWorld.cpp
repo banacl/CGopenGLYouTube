@@ -15,7 +15,7 @@ const GLuint NUM_OF_VERTICES = 3;
 const GLuint NUM_FLOATS_PER_VERTEX = 6;
 const GLuint TRIANGLE_BYTE_SIZE = NUM_OF_VERTICES *NUM_FLOATS_PER_VERTEX*sizeof(GLfloat);
 const GLuint MAX_TRIS = 20;
-
+GLuint programId;
 using namespace std;
 int windowWidth = 500; int windowHeight = 500;
 extern const char*vertexShaderCode;
@@ -102,7 +102,7 @@ void installShaders()
 
 	if (!checkShaderStatus(vertexShaderId) || !checkShaderStatus(fragmentShaderId))
 		return;
-	GLuint programId = glCreateProgram();
+	programId = glCreateProgram();
 	glAttachShader(programId, vertexShaderId);
 	glAttachShader(programId, fragmentShaderId);
 
@@ -140,6 +140,11 @@ void display()
 	//sendAnotherTriToOpengl();
 	//glDrawArrays(GL_TRIANGLES, (numTris-1)*NUM_OF_VERTICES, NUM_OF_VERTICES);//
 	//glDrawArrays(GL_TRIANGLES, 0, 6);
+
+	glm::vec3 dominatingColor(1.0f, 0.0f, 1.0f);
+	GLint dominatingColorUniformLocation = glGetUniformLocation(programId, "dominatingColor");
+	glUniform3fv(dominatingColorUniformLocation, 1, &dominatingColor[0]);
+
 	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, 0);
 	glutSwapBuffers();
 }
@@ -148,34 +153,7 @@ void display()
 
 void sendDataToOpenGL()
 {
-	/*const float RED_TRi_Z = -1;
 	
-	Vertex verts[] =
-	{
-		glm::vec3(-1.0f, -1.0f, RED_TRi_Z),
-		glm::vec3(1.0f, 0.0f,        0.0f),
-		glm::vec3(+0.0f, +1.0f, RED_TRi_Z),
-		glm::vec3(0.0f, 1.0f,        0.0f),
-		glm::vec3(+1.0f, -1.0f, RED_TRi_Z),
-		glm::vec3(0.0f, 0.0f,        1.0f),
-
-	};
-	GLuint myBufferId;
-	glGenBuffers(1, &myBufferId);
-	glBindBuffer(GL_ARRAY_BUFFER, myBufferId);
-	glBufferData(GL_ARRAY_BUFFER,sizeof(verts), verts, GL_STATIC_DRAW);
-	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 6, 0);
-	glEnableVertexAttribArray(1);
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 6, (char*)(sizeof(float) * 3));
-
-
-
-	GLushort index[] = { 0, 1, 2 };
-	GLuint indexBufferId;
-	glGenBuffers(1, &indexBufferId);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBufferId);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(index), index, GL_STATIC_DRAW);*/
 	ShapeData tri = ShapeGenerator::makeTriangle();
 
 	GLuint vertexBufferID;
