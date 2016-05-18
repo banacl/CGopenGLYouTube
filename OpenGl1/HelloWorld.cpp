@@ -6,6 +6,8 @@
 #include<fstream>
 #include<glm\glm.hpp>
 #include"Primitives\Vertex.h"
+#include"Primitives\ShapeGenerator.h"
+
 
 const float X_DELTA = 0.1;
 GLuint numTris = 0;
@@ -146,7 +148,7 @@ void display()
 
 void sendDataToOpenGL()
 {
-	const float RED_TRi_Z = -1;
+	/*const float RED_TRi_Z = -1;
 	
 	Vertex verts[] =
 	{
@@ -173,7 +175,23 @@ void sendDataToOpenGL()
 	GLuint indexBufferId;
 	glGenBuffers(1, &indexBufferId);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBufferId);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(index), index, GL_STATIC_DRAW);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(index), index, GL_STATIC_DRAW);*/
+	ShapeData tri = ShapeGenerator::makeTriangle();
+
+	GLuint vertexBufferID;
+	glGenBuffers(1, &vertexBufferID);
+	glBindBuffer(GL_ARRAY_BUFFER, vertexBufferID);
+	glBufferData(GL_ARRAY_BUFFER, tri.vertexBufferSize(), tri.vertices, GL_STATIC_DRAW);
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 6, 0);
+	glEnableVertexAttribArray(1);
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 6, (char*)(sizeof(float) * 3));
+
+	GLuint indexArrayBufferID;
+	glGenBuffers(1, &indexArrayBufferID);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexArrayBufferID);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, tri.indexBufferSize(), tri.indices, GL_STATIC_DRAW);
+	//tri.cleanup();
 }
 
 
