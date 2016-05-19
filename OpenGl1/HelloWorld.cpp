@@ -5,6 +5,7 @@
 #include <iostream>
 #include<fstream>
 #include<glm\glm.hpp>
+#include<glm\gtc\matrix_transform.hpp>
 #include"Primitives\Vertex.h"
 #include"Primitives\ShapeGenerator.h"
 
@@ -16,8 +17,11 @@ const GLuint NUM_FLOATS_PER_VERTEX = 6;
 const GLuint TRIANGLE_BYTE_SIZE = NUM_OF_VERTICES *NUM_FLOATS_PER_VERTEX*sizeof(GLfloat);
 const GLuint MAX_TRIS = 20;
 GLuint programId;
+GLuint numIndicies;
 using namespace std;
-int windowWidth = 500; int windowHeight = 500;
+using glm::mat4;
+using glm::vec3;
+int windowWidth = 800; int windowHeight = 800;
 extern const char*vertexShaderCode;
 extern const char*fragmentShaderCode;
 
@@ -135,28 +139,20 @@ void sendAnotherTriToOpengl()
 void display()
 {
 	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
-	//glDrawArrays(GL_TRIANGLES, 0, 6);
-	//glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, 0);
-	//sendAnotherTriToOpengl();
-	//glDrawArrays(GL_TRIANGLES, (numTris-1)*NUM_OF_VERTICES, NUM_OF_VERTICES);//
-	//glDrawArrays(GL_TRIANGLES, 0, 6);
 
+	mat4 rotationMatrix = glm::rotate(mat4(), -45.0f, vec3(1.0f, 0.0f, 0.0f));
+	mat4 translationMatrix=glm::translate(mat4(), vec3(0.0f, 0.0f, -6.0f));
+	mat4 projectionMatrix = glm::perspective(60.0f, ((float)windowWidth / windowHeight), 0.1f,15.0f);
 	
-	GLint dominatingColorUniformLocation = glGetUniformLocation(programId, "dominatingColor");
-	GLint yFlipUniformLocation = glGetUniformLocation(programId, "yFlip");
-
-	glm::vec3 dominatingColor(1.0f, 0.0f, 0.0f);
-	glUniform3fv(dominatingColorUniformLocation, 1, &dominatingColor[0]);
-	glUniform1f(yFlipUniformLocation, 1.0f);
-	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, 0);
-
-	dominatingColor.r = 0.0f;
-	dominatingColor.g = 1.0f;
-	glUniform3fv(dominatingColorUniformLocation, 1, &dominatingColor[0]);
-	glUniform1f(yFlipUniformLocation, -1.0f);
-	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, 0);
-
+	mat4 fullTransformMatrix = projectionMatrix*translationMatrix*rotationMatrix;
+	GLint fullTranformMatrixUniformLocation = glGetUniformLocation(programId, "fullTranformMatrix");
 	
+	
+	glUniformMatrix4fv(fullTranformMatrixUniformLocation, 1, GL_FALSE, &fullTransformMatrix[0][0]);
+	
+	
+	glDrawElements(GL_TRIANGLES, numIndicies, GL_UNSIGNED_SHORT, 0);
+
 	glutSwapBuffers();
 }
 
@@ -165,12 +161,12 @@ void display()
 void sendDataToOpenGL()
 {
 	
-	ShapeData tri = ShapeGenerator::makeTriangle();
+	ShapeData shape = ShapeGenerator::makeCube();
 
 	GLuint vertexBufferID;
 	glGenBuffers(1, &vertexBufferID);
 	glBindBuffer(GL_ARRAY_BUFFER, vertexBufferID);
-	glBufferData(GL_ARRAY_BUFFER, tri.vertexBufferSize(), tri.vertices, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, shape.vertexBufferSize(), shape.vertices, GL_STATIC_DRAW);
 	glEnableVertexAttribArray(0);
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 6, 0);
 	glEnableVertexAttribArray(1);
@@ -179,8 +175,9 @@ void sendDataToOpenGL()
 	GLuint indexArrayBufferID;
 	glGenBuffers(1, &indexArrayBufferID);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexArrayBufferID);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, tri.indexBufferSize(), tri.indices, GL_STATIC_DRAW);
-	//tri.cleanup();
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, shape.indexBufferSize(), shape.indices, GL_STATIC_DRAW);
+	numIndicies = shape.numIndices;
+	shape.cleanup();
 }
 
 
