@@ -21,7 +21,7 @@ GLuint numIndicies;
 using namespace std;
 using glm::mat4;
 using glm::vec3;
-int windowWidth = 800; int windowHeight = 800;
+int windowWidth = 1000; int windowHeight = 500;
 extern const char*vertexShaderCode;
 extern const char*fragmentShaderCode;
 
@@ -140,13 +140,19 @@ void display()
 {
 	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 
-	mat4 projectionMatrix = glm::perspective(60.0f, ((float)windowWidth / windowHeight), 0.1f, 15.0f);
-	mat4 projtPlusTranslationMatrix = glm::translate(projectionMatrix, vec3(0.0f, 0.0f, -6.0f));
-	mat4 fullTransformMatrix = glm::rotate(projtPlusTranslationMatrix, 54.0f, vec3(1.0f, 0.0f, 0.0f));
+	mat4 projectionMatrix = glm::perspective(60.0f, ((float)windowWidth / windowHeight), 0.1f, 20.0f);
+
+	mat4 projtPlusTranslationMatrix = glm::translate(projectionMatrix, vec3(-1.0f, 0.0f, -3.0f));
+	mat4 fullTransformMatrix = glm::rotate(projtPlusTranslationMatrix, 36.0f, vec3(1.0f, 0.0f, 0.0f));
 	
 	GLint fullTranformMatrixUniformLocation = glGetUniformLocation(programId, "fullTranformMatrix");
-	
-	
+	glUniformMatrix4fv(fullTranformMatrixUniformLocation, 1, GL_FALSE, &fullTransformMatrix[0][0]);
+	glDrawElements(GL_TRIANGLES, numIndicies, GL_UNSIGNED_SHORT, 0);
+
+	//cube2
+	projtPlusTranslationMatrix = glm::translate(projectionMatrix, vec3(1.0f, 0.0f, -3.75f));
+	fullTransformMatrix = glm::rotate(projtPlusTranslationMatrix, 126.0f, vec3(0.0f, 1.0f, 0.0f));
+
 	glUniformMatrix4fv(fullTranformMatrixUniformLocation, 1, GL_FALSE, &fullTransformMatrix[0][0]);
 	
 	
