@@ -140,22 +140,20 @@ void display()
 {
 	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 
-	mat4 projectionMatrix = glm::perspective(60.0f, ((float)windowWidth / windowHeight), 0.1f, 20.0f);
+	//mat4 projectionMatrix = glm::perspective(60.0f, ((float)windowWidth / windowHeight), 0.1f, 20.0f);
+	////cube1
+	//mat4 projtPlusTranslationMatrix = glm::translate(projectionMatrix, vec3(-1.0f, 0.0f, -3.0f));
+	//mat4 fullTransformMatrix = glm::rotate(projtPlusTranslationMatrix, 36.0f, vec3(1.0f, 0.0f, 0.0f));
+	//
+	//GLint fullTranformMatrixUniformLocation = glGetUniformLocation(programId, "fullTranformMatrix");
+	//glUniformMatrix4fv(fullTranformMatrixUniformLocation, 1, GL_FALSE, &fullTransformMatrix[0][0]);
+	//glDrawElements(GL_TRIANGLES, numIndicies, GL_UNSIGNED_SHORT, 0);
 
-	mat4 projtPlusTranslationMatrix = glm::translate(projectionMatrix, vec3(-1.0f, 0.0f, -3.0f));
-	mat4 fullTransformMatrix = glm::rotate(projtPlusTranslationMatrix, 36.0f, vec3(1.0f, 0.0f, 0.0f));
-	
-	GLint fullTranformMatrixUniformLocation = glGetUniformLocation(programId, "fullTranformMatrix");
-	glUniformMatrix4fv(fullTranformMatrixUniformLocation, 1, GL_FALSE, &fullTransformMatrix[0][0]);
-	glDrawElements(GL_TRIANGLES, numIndicies, GL_UNSIGNED_SHORT, 0);
+	//////cube2
+	////projtPlusTranslationMatrix = glm::translate(projectionMatrix, vec3(1.0f, 0.0f, -3.75f));
+	////fullTransformMatrix = glm::rotate(projtPlusTranslationMatrix, 126.0f, vec3(0.0f, 1.0f, 0.0f));
 
-	//cube2
-	projtPlusTranslationMatrix = glm::translate(projectionMatrix, vec3(1.0f, 0.0f, -3.75f));
-	fullTransformMatrix = glm::rotate(projtPlusTranslationMatrix, 126.0f, vec3(0.0f, 1.0f, 0.0f));
-
-	glUniformMatrix4fv(fullTranformMatrixUniformLocation, 1, GL_FALSE, &fullTransformMatrix[0][0]);
-	
-	
+	////glUniformMatrix4fv(fullTranformMatrixUniformLocation, 1, GL_FALSE, &fullTransformMatrix[0][0]);
 	glDrawElements(GL_TRIANGLES, numIndicies, GL_UNSIGNED_SHORT, 0);
 
 	glutSwapBuffers();
@@ -166,7 +164,7 @@ void display()
 void sendDataToOpenGL()
 {
 	
-	ShapeData shape = ShapeGenerator::makeCube();
+	ShapeData shape = ShapeGenerator::makeTriangle();
 
 	GLuint vertexBufferID;
 	glGenBuffers(1, &vertexBufferID);
@@ -176,6 +174,14 @@ void sendDataToOpenGL()
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 6, 0);
 	glEnableVertexAttribArray(1);
 	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 6, (char*)(sizeof(float) * 3));
+
+	GLfloat offset[] = { 0.0f, 0.5f, 1.0f, 1.2f, 1.6f };
+	GLuint offsetBufferID;
+	glGenBuffers(1, &offsetBufferID);
+	glBindBuffer(GL_ARRAY_BUFFER, offsetBufferID);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(offset), offset, GL_STATIC_DRAW);
+	glEnableVertexAttribArray(2);
+	glVertexAttribPointer(2, 1, GL_FLOAT, GL_FALSE, 0, 0);
 
 	GLuint indexArrayBufferID;
 	glGenBuffers(1, &indexArrayBufferID);
