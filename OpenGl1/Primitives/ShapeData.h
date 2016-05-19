@@ -19,10 +19,10 @@ struct ShapeData
 	{
 		return numIndices * sizeof(GLushort);
 	}
-	/*void cleanup()
+	void cleanup()
 	{
 		delete [] vertices;
 		delete [] indices;
 		numVertices = numIndices = 0;
-	}*/
+	}
 };
