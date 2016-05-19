@@ -154,7 +154,7 @@ void display()
 	////fullTransformMatrix = glm::rotate(projtPlusTranslationMatrix, 126.0f, vec3(0.0f, 1.0f, 0.0f));
 
 	////glUniformMatrix4fv(fullTranformMatrixUniformLocation, 1, GL_FALSE, &fullTransformMatrix[0][0]);
-	glDrawElements(GL_TRIANGLES, numIndicies, GL_UNSIGNED_SHORT, 0);
+	glDrawElementsInstanced(GL_TRIANGLES, numIndicies, GL_UNSIGNED_SHORT, 0,5);
 
 	glutSwapBuffers();
 }
@@ -182,6 +182,7 @@ void sendDataToOpenGL()
 	glBufferData(GL_ARRAY_BUFFER, sizeof(offset), offset, GL_STATIC_DRAW);
 	glEnableVertexAttribArray(2);
 	glVertexAttribPointer(2, 1, GL_FLOAT, GL_FALSE, 0, 0);
+	glVertexAttribDivisor(2, 1);
 
 	GLuint indexArrayBufferID;
 	glGenBuffers(1, &indexArrayBufferID);
