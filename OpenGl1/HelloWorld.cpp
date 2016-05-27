@@ -40,10 +40,28 @@ void keyboard(unsigned char key, int x, int y)
 	case 27:
 		exit(0);
 		break;
+	case 'w':
+		camera.moveForward();
+			break;
+	case 's':
+		camera.moveBackward();
+			break;
+	case 'a':
+		camera.strafeLeft();
+			break;
+	case 'd':
+		camera.strafeRight();
+			break;
+	case 'r':
+		camera.moveUp();
+			break;
+	case 'f':
+		camera.moveDown();
+			break;
 	default:
 		break;
 	}
-
+	glutPostRedisplay();
 }
 bool checkStatus(
 	GLint objectId,
