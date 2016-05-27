@@ -160,17 +160,17 @@ void display()
 {
 	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 
-	mat4 projectionMatrix = glm::perspective(60.0f, ((float)windowWidth / windowHeight), 0.1f, 20.0f);
+	mat4 rotationMatrix = glm::rotate(mat4(), -45.0f, vec3(1.0f, 0.0f, 0.0f));
+	mat4 translationMatrix = glm::translate(mat4(), vec3(0.0f, 0.0f, -6.0f));
+	mat4 projectionMatrix = glm::perspective(60.0f, ((float)windowWidth / windowHeight), 0.1f, 15.0f);
 
-	mat4 tranformationMatrix[] = {
+	mat4 fullTransformMatrix = projectionMatrix*translationMatrix*rotationMatrix;
+	GLint fullTranformMatrixUniformLocation = glGetUniformLocation(programId, "fullTranformMatrix");
 
-		projectionMatrix *camera.getWorldToViewMatrix()* glm::translate(mat4(), vec3(-1.0f, 0.0f, -3.0f))  * glm::rotate(mat4(), 36.0f, vec3(1.0f, 0.0f, 0.0f)),
-		projectionMatrix *camera.getWorldToViewMatrix()*glm::translate(mat4(), vec3(1.0f, 0.0f, -3.75f)) * glm::rotate(mat4(), 126.0f, vec3(0.0f, 1.0f, 0.0f))
+	glUniformMatrix4fv(fullTranformMatrixUniformLocation, 1, GL_FALSE, &fullTransformMatrix[0][0]);
 
-	};
-	glBufferData(GL_ARRAY_BUFFER, sizeof(tranformationMatrix), tranformationMatrix, GL_STATIC_DRAW);
-	glDrawElementsInstanced(GL_TRIANGLES, numIndicies, GL_UNSIGNED_SHORT, 0,2);
 
+	glDrawElements(GL_TRIANGLES, numIndicies, GL_UNSIGNED_SHORT, 0);
 	glutSwapBuffers();
 }
 
@@ -185,7 +185,7 @@ void mouse( int x, int y)
 void sendDataToOpenGL()
 {
 	
-	ShapeData shape = ShapeGenerator::makeCube();
+	ShapeData shape = ShapeGenerator::makeArrow();
 
 	GLuint vertexBufferID;
 	glGenBuffers(1, &vertexBufferID);
@@ -196,14 +196,6 @@ void sendDataToOpenGL()
 	glEnableVertexAttribArray(1);
 	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 6, (char*)(sizeof(float) * 3));
 
-	GLfloat offset[] = { 0.0f, 0.5f, 1.0f, 1.2f, 1.6f };
-	GLuint offsetBufferID;
-	glGenBuffers(1, &offsetBufferID);
-	glBindBuffer(GL_ARRAY_BUFFER, offsetBufferID);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(offset), offset, GL_STATIC_DRAW);
-	glEnableVertexAttribArray(2);
-	glVertexAttribPointer(2, 1, GL_FLOAT, GL_FALSE, 0, 0);
-	glVertexAttribDivisor(2, 1);
 
 	GLuint indexArrayBufferID;
 	glGenBuffers(1, &indexArrayBufferID);
@@ -212,24 +204,7 @@ void sendDataToOpenGL()
 	numIndicies = shape.numIndices;
 	shape.cleanup();
 
-	GLuint transformationMAtrixBufferID;
-	glGenBuffers(1, &transformationMAtrixBufferID);
-	glBindBuffer(GL_ARRAY_BUFFER, transformationMAtrixBufferID);
 	
-	glBufferData(GL_ARRAY_BUFFER, sizeof(glm::mat4)*2, 0, GL_STATIC_DRAW);
-	glVertexAttribPointer(3, 4, GL_FLOAT, GL_FALSE, sizeof(mat4), (void*)(sizeof(GL_FLOAT) * 0));
-	//note second para - 4 is the max that can be sent in
-	glVertexAttribPointer(4, 4, GL_FLOAT, GL_FALSE, sizeof(mat4), (void*)(sizeof(GL_FLOAT) * 4));
-	glVertexAttribPointer(5, 4, GL_FLOAT, GL_FALSE, sizeof(mat4), (void*)(sizeof(GL_FLOAT) * 8));
-	glVertexAttribPointer(6, 4, GL_FLOAT, GL_FALSE, sizeof(mat4), (void*)(sizeof(GL_FLOAT) * 12));
-	glEnableVertexAttribArray(3);
-	glEnableVertexAttribArray(4);
-	glEnableVertexAttribArray(5);
-	glEnableVertexAttribArray(6);
-	glVertexAttribDivisor(3, 1);
-	glVertexAttribDivisor(4, 1);
-	glVertexAttribDivisor(5, 1);
-	glVertexAttribDivisor(6, 1);
 
 }
 
