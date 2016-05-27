@@ -8,7 +8,7 @@
 #include<glm\gtc\matrix_transform.hpp>
 #include"Primitives\Vertex.h"
 #include"Primitives\ShapeGenerator.h"
-
+#include"Camera.h"
 
 const float X_DELTA = 0.1;
 GLuint numTris = 0;
@@ -24,6 +24,7 @@ using glm::vec3;
 int windowWidth = 1000; int windowHeight = 500;
 extern const char*vertexShaderCode;
 extern const char*fragmentShaderCode;
+Camera camera;
 
 void reshape(int w, int h)
 {
@@ -201,8 +202,8 @@ void sendDataToOpenGL()
 
 	mat4 tranformationMatrix[] = {
 		
-		projectionMatrix *glm::translate(mat4(),vec3(-1.0f, 0.0f, -3.0f))  * glm::rotate(mat4(),36.0f, vec3(1.0f, 0.0f, 0.0f)),
-		projectionMatrix *glm::translate(mat4(), vec3(1.0f, 0.0f, -3.75f)) * glm::rotate(mat4(),126.0f, vec3(0.0f, 1.0f, 0.0f))
+		projectionMatrix *camera.getWorldToViewMatrix()* glm::translate(mat4(),vec3(-1.0f, 0.0f, -3.0f))  * glm::rotate(mat4(),36.0f, vec3(1.0f, 0.0f, 0.0f)),
+		projectionMatrix *camera.getWorldToViewMatrix()*glm::translate(mat4(), vec3(1.0f, 0.0f, -3.75f)) * glm::rotate(mat4(), 126.0f, vec3(0.0f, 1.0f, 0.0f))
 
 	};
 	glBufferData(GL_ARRAY_BUFFER, sizeof(tranformationMatrix), tranformationMatrix, GL_STATIC_DRAW);
