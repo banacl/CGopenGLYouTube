@@ -154,7 +154,7 @@ void display()
 	////fullTransformMatrix = glm::rotate(projtPlusTranslationMatrix, 126.0f, vec3(0.0f, 1.0f, 0.0f));
 
 	////glUniformMatrix4fv(fullTranformMatrixUniformLocation, 1, GL_FALSE, &fullTransformMatrix[0][0]);
-	glDrawElementsInstanced(GL_TRIANGLES, numIndicies, GL_UNSIGNED_SHORT, 0,5);
+	glDrawElementsInstanced(GL_TRIANGLES, numIndicies, GL_UNSIGNED_SHORT, 0,2);
 
 	glutSwapBuffers();
 }
@@ -164,7 +164,7 @@ void display()
 void sendDataToOpenGL()
 {
 	
-	ShapeData shape = ShapeGenerator::makeTriangle();
+	ShapeData shape = ShapeGenerator::makeCube();
 
 	GLuint vertexBufferID;
 	glGenBuffers(1, &vertexBufferID);
@@ -190,6 +190,36 @@ void sendDataToOpenGL()
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, shape.indexBufferSize(), shape.indices, GL_STATIC_DRAW);
 	numIndicies = shape.numIndices;
 	shape.cleanup();
+
+	GLuint transformationMAtrixBufferID;
+	glGenBuffers(1, &transformationMAtrixBufferID);
+	glBindBuffer(GL_ARRAY_BUFFER, transformationMAtrixBufferID);
+	
+	
+	
+	mat4 projectionMatrix = glm::perspective(60.0f, ((float)windowWidth / windowHeight), 0.1f, 20.0f);
+
+	mat4 tranformationMatrix[] = {
+		
+		projectionMatrix *glm::translate(mat4(),vec3(-1.0f, 0.0f, -3.0f))  * glm::rotate(mat4(),36.0f, vec3(1.0f, 0.0f, 0.0f)),
+		projectionMatrix *glm::translate(mat4(), vec3(1.0f, 0.0f, -3.75f)) * glm::rotate(mat4(),126.0f, vec3(0.0f, 1.0f, 0.0f))
+
+	};
+	glBufferData(GL_ARRAY_BUFFER, sizeof(tranformationMatrix), tranformationMatrix, GL_STATIC_DRAW);
+	glVertexAttribPointer(3, 4, GL_FLOAT, GL_FALSE, sizeof(mat4), (void*)(sizeof(GL_FLOAT) * 0));
+	//note second para - 4 is the max that can be sent in
+	glVertexAttribPointer(4, 4, GL_FLOAT, GL_FALSE, sizeof(mat4), (void*)(sizeof(GL_FLOAT) * 4));
+	glVertexAttribPointer(5, 4, GL_FLOAT, GL_FALSE, sizeof(mat4), (void*)(sizeof(GL_FLOAT) * 8));
+	glVertexAttribPointer(6, 4, GL_FLOAT, GL_FALSE, sizeof(mat4), (void*)(sizeof(GL_FLOAT) * 12));
+	glEnableVertexAttribArray(3);
+	glEnableVertexAttribArray(4);
+	glEnableVertexAttribArray(5);
+	glEnableVertexAttribArray(6);
+	glVertexAttribDivisor(3, 1);
+	glVertexAttribDivisor(4, 1);
+	glVertexAttribDivisor(5, 1);
+	glVertexAttribDivisor(6, 1);
+
 }
 
 
