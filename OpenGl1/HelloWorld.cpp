@@ -33,6 +33,7 @@ void reshape(int w, int h)
 	glLoadIdentity();
 	gluPerspective(30.0, w / (GLdouble)h, 1.0, 10.0);
 }
+
 void keyboard(unsigned char key, int x, int y)
 {
 	switch (key){
@@ -141,26 +142,27 @@ void display()
 {
 	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 
-	//mat4 projectionMatrix = glm::perspective(60.0f, ((float)windowWidth / windowHeight), 0.1f, 20.0f);
-	////cube1
-	//mat4 projtPlusTranslationMatrix = glm::translate(projectionMatrix, vec3(-1.0f, 0.0f, -3.0f));
-	//mat4 fullTransformMatrix = glm::rotate(projtPlusTranslationMatrix, 36.0f, vec3(1.0f, 0.0f, 0.0f));
-	//
-	//GLint fullTranformMatrixUniformLocation = glGetUniformLocation(programId, "fullTranformMatrix");
-	//glUniformMatrix4fv(fullTranformMatrixUniformLocation, 1, GL_FALSE, &fullTransformMatrix[0][0]);
-	//glDrawElements(GL_TRIANGLES, numIndicies, GL_UNSIGNED_SHORT, 0);
+	mat4 projectionMatrix = glm::perspective(60.0f, ((float)windowWidth / windowHeight), 0.1f, 20.0f);
 
-	//////cube2
-	////projtPlusTranslationMatrix = glm::translate(projectionMatrix, vec3(1.0f, 0.0f, -3.75f));
-	////fullTransformMatrix = glm::rotate(projtPlusTranslationMatrix, 126.0f, vec3(0.0f, 1.0f, 0.0f));
+	mat4 tranformationMatrix[] = {
 
-	////glUniformMatrix4fv(fullTranformMatrixUniformLocation, 1, GL_FALSE, &fullTransformMatrix[0][0]);
+		projectionMatrix *camera.getWorldToViewMatrix()* glm::translate(mat4(), vec3(-1.0f, 0.0f, -3.0f))  * glm::rotate(mat4(), 36.0f, vec3(1.0f, 0.0f, 0.0f)),
+		projectionMatrix *camera.getWorldToViewMatrix()*glm::translate(mat4(), vec3(1.0f, 0.0f, -3.75f)) * glm::rotate(mat4(), 126.0f, vec3(0.0f, 1.0f, 0.0f))
+
+	};
+	glBufferData(GL_ARRAY_BUFFER, sizeof(tranformationMatrix), tranformationMatrix, GL_STATIC_DRAW);
 	glDrawElementsInstanced(GL_TRIANGLES, numIndicies, GL_UNSIGNED_SHORT, 0,2);
 
 	glutSwapBuffers();
 }
 
+void mouse( int x, int y)
+{
+		glm::vec2 mousePos(x, y);
+		camera.mouseUpdate(mousePos);
+		glutPostRedisplay();
 
+}
 
 void sendDataToOpenGL()
 {
@@ -196,17 +198,7 @@ void sendDataToOpenGL()
 	glGenBuffers(1, &transformationMAtrixBufferID);
 	glBindBuffer(GL_ARRAY_BUFFER, transformationMAtrixBufferID);
 	
-	
-	
-	mat4 projectionMatrix = glm::perspective(60.0f, ((float)windowWidth / windowHeight), 0.1f, 20.0f);
-
-	mat4 tranformationMatrix[] = {
-		
-		projectionMatrix *camera.getWorldToViewMatrix()* glm::translate(mat4(),vec3(-1.0f, 0.0f, -3.0f))  * glm::rotate(mat4(),36.0f, vec3(1.0f, 0.0f, 0.0f)),
-		projectionMatrix *camera.getWorldToViewMatrix()*glm::translate(mat4(), vec3(1.0f, 0.0f, -3.75f)) * glm::rotate(mat4(), 126.0f, vec3(0.0f, 1.0f, 0.0f))
-
-	};
-	glBufferData(GL_ARRAY_BUFFER, sizeof(tranformationMatrix), tranformationMatrix, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(glm::mat4)*2, 0, GL_STATIC_DRAW);
 	glVertexAttribPointer(3, 4, GL_FLOAT, GL_FALSE, sizeof(mat4), (void*)(sizeof(GL_FLOAT) * 0));
 	//note second para - 4 is the max that can be sent in
 	glVertexAttribPointer(4, 4, GL_FLOAT, GL_FALSE, sizeof(mat4), (void*)(sizeof(GL_FLOAT) * 4));
@@ -244,6 +236,7 @@ void init()
 
 int main(int argc, char* argv[]) {
 
+
 	// Initialize GLUT
 	glutInit(&argc, argv);
 
@@ -261,6 +254,7 @@ int main(int argc, char* argv[]) {
 	glutDisplayFunc(display);
 	glutReshapeFunc(reshape);
 	glutKeyboardFunc(keyboard);
+	glutMotionFunc(mouse);
 
 	glutMainLoop();
 	
