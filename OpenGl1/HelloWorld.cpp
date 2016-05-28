@@ -164,13 +164,24 @@ void display()
 	mat4 translationMatrix = glm::translate(mat4(), vec3(0.0f, 0.0f, -6.0f));
 	mat4 projectionMatrix = glm::perspective(60.0f, ((float)windowWidth / windowHeight), 0.1f, 15.0f);
 
-	mat4 fullTransformMatrix = projectionMatrix*translationMatrix*rotationMatrix;
+	mat4 fullTransformMatrix = projectionMatrix*camera.getWorldToViewMatrix()*translationMatrix*rotationMatrix;
 	GLint fullTranformMatrixUniformLocation = glGetUniformLocation(programId, "fullTranformMatrix");
 
 	glUniformMatrix4fv(fullTranformMatrixUniformLocation, 1, GL_FALSE, &fullTransformMatrix[0][0]);
 
 
 	glDrawElements(GL_TRIANGLES, numIndicies, GL_UNSIGNED_SHORT, 0);
+
+	rotationMatrix = glm::rotate(mat4(), 45.0f, vec3(1.0f, 0.0f, 0.0f));
+	translationMatrix = glm::translate(mat4(), vec3(3.0f, 0.0f, -6.0f));
+	projectionMatrix = glm::perspective(60.0f, ((float)windowWidth / windowHeight), 0.1f, 15.0f);
+
+	fullTransformMatrix = projectionMatrix*camera.getWorldToViewMatrix() *translationMatrix*rotationMatrix;
+
+	glUniformMatrix4fv(fullTranformMatrixUniformLocation, 1, GL_FALSE, &fullTransformMatrix[0][0]);
+
+	glDrawElements(GL_TRIANGLES, numIndicies, GL_UNSIGNED_SHORT, 0);
+
 	glutSwapBuffers();
 }
 
