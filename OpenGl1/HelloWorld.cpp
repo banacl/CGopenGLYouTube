@@ -30,6 +30,8 @@ GLuint cubeVertexBufferId;
 GLuint cubeIndexBufferId;
 GLuint arrowVertexBufferId;
 GLuint arrowIndexBufferId;
+GLuint cubeVertexArrayObjectId;
+GLuint arrowVertexArrayObjectId;
 
 void reshape(int w, int h)
 {
@@ -171,14 +173,8 @@ void display()
 {
 	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 	//cube1
-	glEnableVertexAttribArray(0);
-	glEnableVertexAttribArray(1);
 
-	glBindBuffer(GL_ARRAY_BUFFER, cubeVertexBufferId);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 6, 0);
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 6, (char*)(sizeof(float) * 3));
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, cubeIndexBufferId);
-
+	glBindVertexArray(cubeVertexArrayObjectId);
 	mat4 rotationMatrix = glm::rotate(mat4(), -45.0f, vec3(1.0f, 0.0f, 0.0f));
 	mat4 translationMatrix = glm::translate(mat4(), vec3(-3.0f, 0.0f, -6.0f));
 	mat4 projectionMatrix = glm::perspective(60.0f, ((float)windowWidth / windowHeight), 0.1f, 15.0f);
@@ -200,10 +196,7 @@ void display()
 
 	glDrawElements(GL_TRIANGLES, cubeNumIndicies, GL_UNSIGNED_SHORT, 0);
 	//arrow
-	glBindBuffer(GL_ARRAY_BUFFER, arrowVertexBufferId);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 6, 0);
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 6, (char*)(sizeof(float) * 3));
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, arrowIndexBufferId);
+	glBindVertexArray(arrowVertexArrayObjectId);
 
 	rotationMatrix = glm::rotate(mat4(), 45.0f, vec3(1.0f, 0.0f, 0.0f));
 	translationMatrix = glm::translate(mat4(), vec3(0.0f, 0.0f, -6.0f));
@@ -246,7 +239,28 @@ void sendDataToOpenGL()
 	shape.cleanup();
 
 }
+void setUpVertexArrays()
+{
+	glGenVertexArrays(1,&cubeVertexArrayObjectId);
+	glGenVertexArrays(1,&arrowVertexArrayObjectId);
 
+	glBindVertexArray(cubeVertexArrayObjectId);
+	glEnableVertexAttribArray(0);
+	glEnableVertexAttribArray(1);
+	glBindBuffer(GL_ARRAY_BUFFER, cubeVertexBufferId);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 6, 0);
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 6, (char*)(sizeof(float) * 3));
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, cubeIndexBufferId);
+
+	glBindVertexArray(arrowVertexArrayObjectId);
+	glEnableVertexAttribArray(0);
+	glEnableVertexAttribArray(1);
+	glBindBuffer(GL_ARRAY_BUFFER, arrowVertexBufferId);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 6, 0);
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 6, (char*)(sizeof(float) * 3));
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, arrowIndexBufferId);
+
+}
 
 void init()
 {
@@ -259,6 +273,7 @@ void init()
 	}
 	glEnable(GL_DEPTH_TEST);
 	sendDataToOpenGL();
+	setUpVertexArrays();
 	
 	installShaders();//helper function
 	
