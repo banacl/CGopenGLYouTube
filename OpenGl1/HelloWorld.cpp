@@ -17,7 +17,8 @@ const GLuint NUM_FLOATS_PER_VERTEX = 6;
 const GLuint TRIANGLE_BYTE_SIZE = NUM_OF_VERTICES *NUM_FLOATS_PER_VERTEX*sizeof(GLfloat);
 const GLuint MAX_TRIS = 20;
 GLuint programId;
-GLuint numIndicies;
+GLuint cubeNumIndicies;
+GLuint arrowNumIndicies;
 using namespace std;
 using glm::mat4;
 using glm::vec3;
@@ -33,7 +34,13 @@ void reshape(int w, int h)
 	glLoadIdentity();
 	gluPerspective(30.0, w / (GLdouble)h, 1.0, 10.0);
 }
+void mouse(int x, int y)
+{
+	glm::vec2 mousePos(x, y);
+	camera.mouseUpdate(mousePos);
+	glutPostRedisplay();
 
+}
 void keyboard(unsigned char key, int x, int y)
 {
 	switch (key){
@@ -159,7 +166,7 @@ void sendAnotherTriToOpengl()
 void display()
 {
 	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
-
+	//cube1
 	mat4 rotationMatrix = glm::rotate(mat4(), -45.0f, vec3(1.0f, 0.0f, 0.0f));
 	mat4 translationMatrix = glm::translate(mat4(), vec3(0.0f, 0.0f, -6.0f));
 	mat4 projectionMatrix = glm::perspective(60.0f, ((float)windowWidth / windowHeight), 0.1f, 15.0f);
@@ -169,9 +176,8 @@ void display()
 
 	glUniformMatrix4fv(fullTranformMatrixUniformLocation, 1, GL_FALSE, &fullTransformMatrix[0][0]);
 
-
-	glDrawElements(GL_TRIANGLES, numIndicies, GL_UNSIGNED_SHORT, 0);
-
+	glDrawElements(GL_TRIANGLES, cubeNumIndicies, GL_UNSIGNED_SHORT, 0);
+	//cube 2
 	rotationMatrix = glm::rotate(mat4(), 45.0f, vec3(1.0f, 0.0f, 0.0f));
 	translationMatrix = glm::translate(mat4(), vec3(3.0f, 0.0f, -6.0f));
 	projectionMatrix = glm::perspective(60.0f, ((float)windowWidth / windowHeight), 0.1f, 15.0f);
@@ -180,23 +186,25 @@ void display()
 
 	glUniformMatrix4fv(fullTranformMatrixUniformLocation, 1, GL_FALSE, &fullTransformMatrix[0][0]);
 
-	glDrawElements(GL_TRIANGLES, numIndicies, GL_UNSIGNED_SHORT, 0);
+	glDrawElements(GL_TRIANGLES, cubeNumIndicies, GL_UNSIGNED_SHORT, 0);
+	//arrow
+	rotationMatrix = glm::rotate(mat4(), 45.0f, vec3(1.0f, 0.0f, 0.0f));
+	translationMatrix = glm::translate(mat4(), vec3(1.0f, 0.0f, -6.0f));
+	projectionMatrix = glm::perspective(60.0f, ((float)windowWidth / windowHeight), 0.1f, 15.0f);
+
+	fullTransformMatrix = projectionMatrix*camera.getWorldToViewMatrix() *translationMatrix*rotationMatrix;
+
+	glUniformMatrix4fv(fullTranformMatrixUniformLocation, 1, GL_FALSE, &fullTransformMatrix[0][0]);
+
+	glDrawElements(GL_TRIANGLES, arrowNumIndicies, GL_UNSIGNED_SHORT, 0);
 
 	glutSwapBuffers();
-}
-
-void mouse( int x, int y)
-{
-		glm::vec2 mousePos(x, y);
-		camera.mouseUpdate(mousePos);
-		glutPostRedisplay();
-
 }
 
 void sendDataToOpenGL()
 {
 	
-	ShapeData shape = ShapeGenerator::makeArrow();
+	ShapeData shape = ShapeGenerator::makeCube();
 
 	GLuint vertexBufferID;
 	glGenBuffers(1, &vertexBufferID);
@@ -212,10 +220,24 @@ void sendDataToOpenGL()
 	glGenBuffers(1, &indexArrayBufferID);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexArrayBufferID);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, shape.indexBufferSize(), shape.indices, GL_STATIC_DRAW);
-	numIndicies = shape.numIndices;
+	cubeNumIndicies = shape.numIndices;
 	shape.cleanup();
 
-	
+	shape = ShapeGenerator::makeArrow();
+
+	glGenBuffers(1, &vertexBufferID);
+	glBindBuffer(GL_ARRAY_BUFFER, vertexBufferID);
+	glBufferData(GL_ARRAY_BUFFER, shape.vertexBufferSize(), shape.vertices, GL_STATIC_DRAW);
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 6, 0);
+	glEnableVertexAttribArray(1);
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 6, (char*)(sizeof(float) * 3));
+
+	glGenBuffers(1, &indexArrayBufferID);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexArrayBufferID);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, shape.indexBufferSize(), shape.indices, GL_STATIC_DRAW);
+	arrowNumIndicies = shape.numIndices;
+	shape.cleanup();
 
 }
 
