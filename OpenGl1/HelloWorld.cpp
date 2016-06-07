@@ -173,10 +173,15 @@ void sendAnotherTriToOpengl()
 void display()
 {
 	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
+	
+	GLint ambientLightUniformLocation = glGetUniformLocation(programId, "ambientLight");
+	vec3 ambientLight(0.9f, 0.9f, 0.9f);
+	glUniform3fv(ambientLightUniformLocation, 1, &ambientLight[0]);
+
 	//cube1
 
 	glBindVertexArray(cubeVertexArrayObjectId);
-	mat4 rotationMatrix = glm::rotate(mat4(), -45.0f, vec3(1.0f, 0.0f, 0.0f));
+	mat4 rotationMatrix = glm::rotate(mat4(), 0.0f, vec3(1.0f, 0.0f, 0.0f));
 	mat4 translationMatrix = glm::translate(mat4(), vec3(-3.0f, 0.0f, -6.0f));
 	mat4 projectionMatrix = glm::perspective(60.0f, ((float)windowWidth / windowHeight), 0.1f, 15.0f);
 
@@ -187,7 +192,7 @@ void display()
 
 	glDrawElements(GL_TRIANGLES, cubeNumIndicies, GL_UNSIGNED_SHORT, (void*)cubeIndexBufferOffsetInBytes);
 	//cube 2
-	rotationMatrix = glm::rotate(mat4(), 45.0f, vec3(1.0f, 0.0f, 0.0f));
+	rotationMatrix = glm::rotate(mat4(), 0.0f, vec3(1.0f, 0.0f, 0.0f));
 	translationMatrix = glm::translate(mat4(), vec3(3.0f, 0.0f, -6.0f));
 	projectionMatrix = glm::perspective(60.0f, ((float)windowWidth / windowHeight), 0.1f, 15.0f);
 
@@ -264,7 +269,7 @@ void init()
 
 	}
 	glEnable(GL_DEPTH_TEST);
-	glEnable(GL_CULL_FACE);
+	//glEnable(GL_CULL_FACE);
 	sendDataToOpenGL();
 	
 	installShaders();//helper function
