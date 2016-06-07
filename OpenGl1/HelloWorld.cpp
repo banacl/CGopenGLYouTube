@@ -264,6 +264,7 @@ void init()
 
 	}
 	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_CULL_FACE);
 	sendDataToOpenGL();
 	
 	installShaders();//helper function
