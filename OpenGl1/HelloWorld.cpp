@@ -181,7 +181,7 @@ void display()
 	//cube1
 
 	glBindVertexArray(cubeVertexArrayObjectId);
-	mat4 rotationMatrix = glm::rotate(mat4(), 0.0f, vec3(1.0f, 0.0f, 0.0f));
+	mat4 rotationMatrix = glm::rotate(mat4(), 45.0f, vec3(1.0f, 0.0f, 0.0f));
 	mat4 translationMatrix = glm::translate(mat4(), vec3(-3.0f, 0.0f, -6.0f));
 	mat4 projectionMatrix = glm::perspective(60.0f, ((float)windowWidth / windowHeight), 0.1f, 15.0f);
 
@@ -192,7 +192,7 @@ void display()
 
 	glDrawElements(GL_TRIANGLES, cubeNumIndicies, GL_UNSIGNED_SHORT, (void*)cubeIndexBufferOffsetInBytes);
 	//cube 2
-	rotationMatrix = glm::rotate(mat4(), 0.0f, vec3(1.0f, 0.0f, 0.0f));
+	rotationMatrix = glm::rotate(mat4(), 45.0f, vec3(1.0f, 0.0f, 0.0f));
 	translationMatrix = glm::translate(mat4(), vec3(3.0f, 0.0f, -6.0f));
 	projectionMatrix = glm::perspective(60.0f, ((float)windowWidth / windowHeight), 0.1f, 15.0f);
 
@@ -220,7 +220,7 @@ void display()
 void sendDataToOpenGL()
 {
 	
-	ShapeData cube = ShapeGenerator::makeCube();
+	ShapeData cube = ShapeGenerator::makePlane();
 	ShapeData arrow = ShapeGenerator::makeArrow();
 	glGenBuffers(1, &theBufferId);
 	glBindBuffer(GL_ARRAY_BUFFER, theBufferId);
