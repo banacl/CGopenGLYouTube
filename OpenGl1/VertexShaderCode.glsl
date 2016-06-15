@@ -20,4 +20,5 @@ gl_Position =fullTranformMatrix * v;//projected space
 //our light position uniform used in fragment shader is in the world space so we need to be consistent.
 thePosition = vec3(modelToWorldMatrix * v);
 theNormal = normal;
+//theNormal = vec3(modelToWorldMatrix *vec4(normal,0));
 }

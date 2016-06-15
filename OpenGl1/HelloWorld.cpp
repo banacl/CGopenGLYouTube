@@ -214,7 +214,7 @@ void display()
 
 	rotationMatrix = glm::rotate(mat4(), 45.0f, vec3(1.0f, 0.0f, 0.0f));
 	translationMatrix = glm::translate(mat4(), vec3(0.0f, 0.0f, -6.0f));
-	glm::mat4 arrowModelToworld = translationMatrix;
+	glm::mat4 arrowModelToworld = translationMatrix*rotationMatrix;
 	projectionMatrix = glm::perspective(60.0f, ((float)windowWidth / windowHeight), 0.1f, 15.0f);
 
 	fullTransformMatrix = projectionMatrix*camera.getWorldToViewMatrix() *translationMatrix*rotationMatrix;
