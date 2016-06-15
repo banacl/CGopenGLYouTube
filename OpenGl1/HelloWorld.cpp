@@ -19,6 +19,7 @@ const GLuint MAX_TRIS = 20;
 GLuint programId;
 GLuint cubeNumIndicies;
 GLuint arrowNumIndicies;
+GLuint planeNumIndices;
 using namespace std;
 using glm::mat4;
 using glm::vec3;
@@ -30,9 +31,11 @@ GLuint theBufferId;
 
 GLuint cubeVertexArrayObjectId;
 GLuint arrowVertexArrayObjectId;
+GLuint planeVertexArrayObjectID;
 
 GLuint cubeIndexBufferOffsetInBytes;
 GLuint arrowIndexBufferOffsetInBytes;
+GLuint planeIndexByteOffset;
 
 void reshape(int w, int h)
 {
@@ -214,27 +217,53 @@ void display()
 
 	glDrawElements(GL_TRIANGLES, arrowNumIndicies, GL_UNSIGNED_SHORT, (void*)arrowIndexBufferOffsetInBytes);
 
+	// Plane
+	glBindVertexArray(planeVertexArrayObjectID);
+
+	rotationMatrix = glm::rotate(mat4(), 45.0f, vec3(1.0f, 0.0f, 0.0f));
+	translationMatrix = glm::translate(mat4(), vec3(0.0f, 0.0f, -10.0f));
+	projectionMatrix = glm::perspective(60.0f, ((float)windowWidth / windowHeight), 0.1f, 20.0f);
+	fullTransformMatrix = projectionMatrix*camera.getWorldToViewMatrix() *translationMatrix*rotationMatrix;
+	
+	
+
+	glUniformMatrix4fv(fullTranformMatrixUniformLocation, 1, GL_FALSE, &fullTransformMatrix[0][0]);
+	glDrawElements(GL_TRIANGLES, planeNumIndices, GL_UNSIGNED_SHORT, (void*)planeIndexByteOffset);
+
 	glutSwapBuffers();
 }
 
 void sendDataToOpenGL()
 {
 	
-	ShapeData cube = ShapeGenerator::makePlane();
+	ShapeData cube = ShapeGenerator::makeCube();
 	ShapeData arrow = ShapeGenerator::makeArrow();
+	ShapeData plane = ShapeGenerator::makePlane(20);
+
 	glGenBuffers(1, &theBufferId);
 	glBindBuffer(GL_ARRAY_BUFFER, theBufferId);
-	glBufferData(GL_ARRAY_BUFFER, cube.vertexBufferSize()+cube.indexBufferSize()+ arrow.vertexBufferSize()+arrow.indexBufferSize(), 0, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, cube.vertexBufferSize()+cube.indexBufferSize()+ 
+								arrow.vertexBufferSize()+arrow.indexBufferSize()+
+								plane.vertexBufferSize() + plane.indexBufferSize()
+								,0, GL_STATIC_DRAW);
 	glBufferSubData(GL_ARRAY_BUFFER, 0, cube.vertexBufferSize(), cube.vertices);
 	glBufferSubData(GL_ARRAY_BUFFER, cube.vertexBufferSize(), cube.indexBufferSize(), cube.indices);
 	glBufferSubData(GL_ARRAY_BUFFER, cube.vertexBufferSize() + cube.indexBufferSize(), arrow.vertexBufferSize(), arrow.vertices);
 	glBufferSubData(GL_ARRAY_BUFFER, cube.vertexBufferSize() + cube.indexBufferSize() + arrow.vertexBufferSize(), arrow.indexBufferSize(), arrow.indices);
 	
+	glBufferSubData(GL_ARRAY_BUFFER, cube.vertexBufferSize() + cube.indexBufferSize() + 
+		arrow.vertexBufferSize() + arrow.indexBufferSize(), plane.vertexBufferSize(), plane.vertices);
+	glBufferSubData(GL_ARRAY_BUFFER, cube.vertexBufferSize() + cube.indexBufferSize() +
+		arrow.vertexBufferSize() + arrow.indexBufferSize() + plane.vertexBufferSize(),
+		plane.indexBufferSize(), plane.indices);
+
 	cubeNumIndicies = cube.numIndices;
 	arrowNumIndicies = arrow.numIndices;
+	planeNumIndices = plane.numIndices;
 
 	glGenVertexArrays(1,&cubeVertexArrayObjectId);
 	glGenVertexArrays(1,&arrowVertexArrayObjectId);
+	glGenVertexArrays(1, &planeVertexArrayObjectID);
 
 	glBindVertexArray(cubeVertexArrayObjectId);
 	glEnableVertexAttribArray(0);
@@ -252,10 +281,23 @@ void sendDataToOpenGL()
 	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 6, (void*)(cube.vertexBufferSize() + cube.indexBufferSize() + sizeof(float) * 3));
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, theBufferId);
 
+	
+	glBindVertexArray(planeVertexArrayObjectID);
+	glEnableVertexAttribArray(0);
+	glEnableVertexAttribArray(1);
+	glBindBuffer(GL_ARRAY_BUFFER, theBufferId);
+	GLuint planeByteOffset = cube.vertexBufferSize() + cube.indexBufferSize() + arrow.vertexBufferSize() + arrow.indexBufferSize();
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 6, (void*)planeByteOffset);
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 6, (void*)(planeByteOffset + sizeof(float) * 3));
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, theBufferId);
+	
 	cubeIndexBufferOffsetInBytes = cube.vertexBufferSize();
 	arrowIndexBufferOffsetInBytes = cube.vertexBufferSize()+ cube.indexBufferSize()+arrow.vertexBufferSize();
+	planeIndexByteOffset = cube.vertexBufferSize() + cube.indexBufferSize() + arrow.vertexBufferSize()+arrow.indexBufferSize() + plane.vertexBufferSize();
+	
 	cube.cleanup();
 	arrow.cleanup();
+	plane.cleanup();
 
 }
 
