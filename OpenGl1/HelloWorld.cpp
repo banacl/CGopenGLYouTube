@@ -268,27 +268,33 @@ void sendDataToOpenGL()
 	glBindVertexArray(cubeVertexArrayObjectId);
 	glEnableVertexAttribArray(0);
 	glEnableVertexAttribArray(1);
+	glEnableVertexAttribArray(2);
 	glBindBuffer(GL_ARRAY_BUFFER, theBufferId);
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 9, 0);
 	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 9, (void*)(sizeof(float) * 3));
+	glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(GL_FLOAT) * 9, (void*)(sizeof(float) * 6));
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, theBufferId);
 
 	glBindVertexArray(arrowVertexArrayObjectId);
 	glEnableVertexAttribArray(0);
 	glEnableVertexAttribArray(1);
+	glEnableVertexAttribArray(2);
 	glBindBuffer(GL_ARRAY_BUFFER, theBufferId);
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 9, (void*)(cube.vertexBufferSize()+cube.indexBufferSize()));
 	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 9, (void*)(cube.vertexBufferSize() + cube.indexBufferSize() + sizeof(float) * 3));
+	glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 9, (void*)(cube.vertexBufferSize() + cube.indexBufferSize() + sizeof(float) * 6));
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, theBufferId);
 
 	
 	glBindVertexArray(planeVertexArrayObjectID);
 	glEnableVertexAttribArray(0);
 	glEnableVertexAttribArray(1);
+	glEnableVertexAttribArray(2);
 	glBindBuffer(GL_ARRAY_BUFFER, theBufferId);
 	GLuint planeByteOffset = cube.vertexBufferSize() + cube.indexBufferSize() + arrow.vertexBufferSize() + arrow.indexBufferSize();
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 9, (void*)planeByteOffset);
 	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 9, (void*)(planeByteOffset + sizeof(float) * 3));
+	glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 9, (void*)(planeByteOffset + sizeof(float) * 6));
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, theBufferId);
 	
 	cubeIndexBufferOffsetInBytes = cube.vertexBufferSize();
