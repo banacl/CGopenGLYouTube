@@ -182,7 +182,7 @@ void display()
 	glUniform3fv(ambientLightUniformLocation, 1, &ambientLight[0]);
 
 	GLint lightPositionUniformLocation = glGetUniformLocation(programId, "lightPosition");
-	glm::vec3 lightPosition = vec3(0.0f, 3.0f, 0.0f);
+	glm::vec3 lightPosition = vec3(0.0f, 1.0f, 0.0f);
 	glUniform3fv(lightPositionUniformLocation, 1, &lightPosition[0]);
 	//cube1
 

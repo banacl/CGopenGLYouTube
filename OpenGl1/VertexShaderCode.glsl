@@ -6,15 +6,15 @@ in layout(location=2) vec3 normal;
 
 uniform mat4 fullTranformMatrix;
 uniform vec3 ambientLight;
-uniform vec3 lightPosition;
 
-out vec3 outColor;
+out vec3 thePosition;
+out vec3 theNormal;
+
 void main()
 {
 vec4 v = vec4(position,1.0);
 gl_Position =fullTranformMatrix * v;//projected space
-vec3 lightVector = normalize(lightPosition - position);
-//outColor = inputColor * dot(lightVector,normal);
-float brightness = dot(lightVector,normal);
-outColor = vec3(brightness,brightness,brightness);
+
+thePosition = position;
+theNormal = normal;
 }
