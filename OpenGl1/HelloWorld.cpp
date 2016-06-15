@@ -181,6 +181,9 @@ void display()
 	vec3 ambientLight(0.9f, 0.9f, 0.9f);
 	glUniform3fv(ambientLightUniformLocation, 1, &ambientLight[0]);
 
+	GLint lightPositionUniformLocation = glGetUniformLocation(programId, "lightPosition");
+	glm::vec3 lightPosition = vec3(0.0f, 3.0f, 0.0f);
+	glUniform3fv(lightPositionUniformLocation, 1, &lightPosition[0]);
 	//cube1
 
 	glBindVertexArray(cubeVertexArrayObjectId);
@@ -193,7 +196,7 @@ void display()
 
 	glUniformMatrix4fv(fullTranformMatrixUniformLocation, 1, GL_FALSE, &fullTransformMatrix[0][0]);
 
-	glDrawElements(GL_TRIANGLES, cubeNumIndicies, GL_UNSIGNED_SHORT, (void*)cubeIndexBufferOffsetInBytes);
+	//glDrawElements(GL_TRIANGLES, cubeNumIndicies, GL_UNSIGNED_SHORT, (void*)cubeIndexBufferOffsetInBytes);
 	//cube 2
 	rotationMatrix = glm::rotate(mat4(), 45.0f, vec3(1.0f, 0.0f, 0.0f));
 	translationMatrix = glm::translate(mat4(), vec3(3.0f, 0.0f, -6.0f));
@@ -203,7 +206,7 @@ void display()
 
 	glUniformMatrix4fv(fullTranformMatrixUniformLocation, 1, GL_FALSE, &fullTransformMatrix[0][0]);
 
-	glDrawElements(GL_TRIANGLES, cubeNumIndicies, GL_UNSIGNED_SHORT, (void*)cubeIndexBufferOffsetInBytes);
+	//glDrawElements(GL_TRIANGLES, cubeNumIndicies, GL_UNSIGNED_SHORT, (void*)cubeIndexBufferOffsetInBytes);
 	//arrow
 	glBindVertexArray(arrowVertexArrayObjectId);
 
@@ -215,14 +218,14 @@ void display()
 
 	glUniformMatrix4fv(fullTranformMatrixUniformLocation, 1, GL_FALSE, &fullTransformMatrix[0][0]);
 
-	glDrawElements(GL_TRIANGLES, arrowNumIndicies, GL_UNSIGNED_SHORT, (void*)arrowIndexBufferOffsetInBytes);
+	//glDrawElements(GL_TRIANGLES, arrowNumIndicies, GL_UNSIGNED_SHORT, (void*)arrowIndexBufferOffsetInBytes);
 
 	// Plane
 	glBindVertexArray(planeVertexArrayObjectID);
 
 	rotationMatrix = glm::rotate(mat4(), 45.0f, vec3(1.0f, 0.0f, 0.0f));
 	translationMatrix = glm::translate(mat4(), vec3(0.0f, 0.0f, -10.0f));
-	projectionMatrix = glm::perspective(60.0f, ((float)windowWidth / windowHeight), 0.1f, 20.0f);
+	projectionMatrix = glm::perspective(60.0f, ((float)windowWidth / windowHeight), 0.1f, 25.0f);
 	fullTransformMatrix = projectionMatrix*camera.getWorldToViewMatrix() *translationMatrix*rotationMatrix;
 	
 	
@@ -238,7 +241,7 @@ void sendDataToOpenGL()
 	
 	ShapeData cube = ShapeGenerator::makeCube();
 	ShapeData arrow = ShapeGenerator::makeArrow();
-	ShapeData plane = ShapeGenerator::makePlane(20);
+	ShapeData plane = ShapeGenerator::makePlane(10);
 
 	glGenBuffers(1, &theBufferId);
 	glBindBuffer(GL_ARRAY_BUFFER, theBufferId);
