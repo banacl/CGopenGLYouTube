@@ -1,6 +1,6 @@
 #version 430
 
-in layout(location=0) vec3 vertexPositionModel;//model position not projected
+in layout(location=0) vec4 vertexPositionModel;//model position not projected
 in layout(location=1) vec3 vertexColor;
 in layout(location=2) vec3 normalModel;
 
@@ -13,13 +13,12 @@ out vec3 normalWorld;
 
 void main()
 {
-vec4 v = vec4(vertexPositionModel,1.0);
-gl_Position =modelToWorldToProjectionMatrix * v;//projected space
+gl_Position =modelToWorldToProjectionMatrix * vertexPositionModel;//projected space
 
 //vertexPositionWorld = vertexPositionModel;//thePosition is assuming world space when it is model space
 //our light position uniform used in fragment shader is in the world space so we need to be consistent.
 //normalWorld = normalModel;
 
-vertexPositionWorld = vec3(modelToWorldMatrix * v);
+vertexPositionWorld = vec3(modelToWorldMatrix * vertexPositionModel);
 normalWorld = vec3(modelToWorldMatrix *vec4(normalModel,0));
 }
