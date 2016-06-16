@@ -181,9 +181,9 @@ void display()
 	vec3 ambientLight(0.9f, 0.9f, 0.9f);
 	glUniform3fv(ambientLightUniformLocation, 1, &ambientLight[0]);
 
-	GLint lightPositionUniformLocation = glGetUniformLocation(programId, "lightPosition");
-	glm::vec3 lightPosition = vec3(-3.0f, 1.0f, -5.0f);
-	glUniform3fv(lightPositionUniformLocation, 1, &lightPosition[0]);
+	GLint lightPositionWorldUniformLocation = glGetUniformLocation(programId, "lightPositionWorld");
+	glm::vec3 lightPositionWorld = vec3(-3.0f, 1.0f, -5.0f);
+	glUniform3fv(lightPositionWorldUniformLocation, 1, &lightPositionWorld[0]);
 	//cube1
 
 	glBindVertexArray(cubeVertexArrayObjectId);
@@ -191,10 +191,10 @@ void display()
 	mat4 translationMatrix = glm::translate(mat4(), vec3(-3.0f, 0.0f, -6.0f));
 	mat4 projectionMatrix = glm::perspective(60.0f, ((float)windowWidth / windowHeight), 0.1f, 15.0f);
 
-	mat4 fullTransformMatrix = projectionMatrix*camera.getWorldToViewMatrix()*translationMatrix*rotationMatrix;
-	GLint fullTranformMatrixUniformLocation = glGetUniformLocation(programId, "fullTranformMatrix");
+	mat4 modelToWorldToProjectionMatrix = projectionMatrix*camera.getWorldToViewMatrix()*translationMatrix*rotationMatrix;
+	GLint modelToWorldToProjectionMatrixUniformLocation = glGetUniformLocation(programId, "modelToWorldToProjectionMatrix");
 
-	glUniformMatrix4fv(fullTranformMatrixUniformLocation, 1, GL_FALSE, &fullTransformMatrix[0][0]);
+	glUniformMatrix4fv(modelToWorldToProjectionMatrixUniformLocation, 1, GL_FALSE, &modelToWorldToProjectionMatrix[0][0]);
 
 	//glDrawElements(GL_TRIANGLES, cubeNumIndicies, GL_UNSIGNED_SHORT, (void*)cubeIndexBufferOffsetInBytes);
 	//cube 2
@@ -202,9 +202,9 @@ void display()
 	translationMatrix = glm::translate(mat4(), vec3(3.0f, 0.0f, -6.0f));
 	projectionMatrix = glm::perspective(60.0f, ((float)windowWidth / windowHeight), 0.1f, 15.0f);
 
-	fullTransformMatrix = projectionMatrix*camera.getWorldToViewMatrix() *translationMatrix*rotationMatrix;
+	modelToWorldToProjectionMatrix = projectionMatrix*camera.getWorldToViewMatrix() *translationMatrix*rotationMatrix;
 
-	glUniformMatrix4fv(fullTranformMatrixUniformLocation, 1, GL_FALSE, &fullTransformMatrix[0][0]);
+	glUniformMatrix4fv(modelToWorldToProjectionMatrixUniformLocation, 1, GL_FALSE, &modelToWorldToProjectionMatrix[0][0]);
 
 	//glDrawElements(GL_TRIANGLES, cubeNumIndicies, GL_UNSIGNED_SHORT, (void*)cubeIndexBufferOffsetInBytes);
 	
@@ -217,9 +217,9 @@ void display()
 	glm::mat4 arrowModelToworld = translationMatrix*rotationMatrix;
 	projectionMatrix = glm::perspective(60.0f, ((float)windowWidth / windowHeight), 0.1f, 15.0f);
 
-	fullTransformMatrix = projectionMatrix*camera.getWorldToViewMatrix() *translationMatrix*rotationMatrix;
+	modelToWorldToProjectionMatrix = projectionMatrix*camera.getWorldToViewMatrix() *translationMatrix*rotationMatrix;
 
-	glUniformMatrix4fv(fullTranformMatrixUniformLocation, 1, GL_FALSE, &fullTransformMatrix[0][0]);
+	glUniformMatrix4fv(modelToWorldToProjectionMatrixUniformLocation, 1, GL_FALSE, &modelToWorldToProjectionMatrix[0][0]);
 	glUniformMatrix4fv(modelToWorldMatrixUniformLocation, 1, GL_FALSE, &arrowModelToworld[0][0]);
 	glDrawElements(GL_TRIANGLES, arrowNumIndicies, GL_UNSIGNED_SHORT, (void*)arrowIndexBufferOffsetInBytes);
 
@@ -230,9 +230,9 @@ void display()
 	translationMatrix = glm::translate(mat4(), vec3(0.0f, 0.0f, -10.0f));
 	glm::mat4 planeModelToworld = translationMatrix;
 	projectionMatrix = glm::perspective(60.0f, ((float)windowWidth / windowHeight), 0.1f, 25.0f);
-	fullTransformMatrix = projectionMatrix*camera.getWorldToViewMatrix() *translationMatrix*rotationMatrix;
+	modelToWorldToProjectionMatrix = projectionMatrix*camera.getWorldToViewMatrix() *translationMatrix*rotationMatrix;
 
-	glUniformMatrix4fv(fullTranformMatrixUniformLocation, 1, GL_FALSE, &fullTransformMatrix[0][0]);
+	glUniformMatrix4fv(modelToWorldToProjectionMatrixUniformLocation, 1, GL_FALSE, &modelToWorldToProjectionMatrix[0][0]);
 	glUniformMatrix4fv(modelToWorldMatrixUniformLocation, 1, GL_FALSE, &arrowModelToworld[0][0]);
 	glDrawElements(GL_TRIANGLES, planeNumIndices, GL_UNSIGNED_SHORT, (void*)planeIndexByteOffset);
 
